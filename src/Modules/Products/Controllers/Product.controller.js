@@ -64,9 +64,9 @@ import Product from '../Models/Product.model.js'
  export const updateProduct = async (req, res) => { 
     try {
         const { productId } = req.params
-        const { name, price, description } = req.body
+        const { image, name, price, description, category } = req.body
 
-        const product = await Product.findByIdAndUpdate(productId, { name, price, description }, { new: true })
+        const product = await Product.findByIdAndUpdate(productId, {image, name, price, description, category }, { new: true })
         if(!product) {
             return res.status(404).json({message: 'El producto no existe'})
         }
