@@ -17,7 +17,6 @@ export const getOrders = async (req, res) => {
 
 //Agregar Order
 export const addOrder = async (req, res) => {
-    console.log(req.body)
     const { items } = req.body 
     if(!items || items.length === 0) {
         return res.status(400).json({message: 'El carrito de compras esta vacio'})

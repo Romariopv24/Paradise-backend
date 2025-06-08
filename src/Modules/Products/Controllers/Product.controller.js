@@ -22,17 +22,27 @@ import Product from '../Models/Product.model.js'
     try {
         const newProduct = await Product(req.body)
         if(!newProduct) {
-            return res.status(404).json({message:'Campos Incompletos'})
+            return res.status(404).json({
+                success: false,
+                message:'Campos Incompletos'})
         }
 
         const saveProduct = await newProduct.save()
-        return res.status(201).json(saveProduct)
+        return res.status(200).json({success:true, message: 'El producto ha sido guardado correctamente', product: {
+            id: saveProduct._id,
+            image: saveProduct.image,
+            name: saveProduct.name,
+            category: saveProduct.category,
+            price: saveProduct.price,
+            description: saveProduct.description,
+            createAt: saveProduct.createdAt,
+        }})
 
     } catch (error) {
         
-        console.error("Error guardando el producto: ", error.errors.price)
+        console.error("Error guardando el producto: ", error)
 
-        return res.status(500).json({message:`Internal server error: ${error.errors.price} `, error: error.errors.price, code: 4001, success:false})
+        return res.status(500).json({message:`Internal server error: ${error} `, error: error, code: 401, success:false})
     }
  }
 
@@ -48,5 +58,23 @@ import Product from '../Models/Product.model.js'
 
         return res.status(500).json({message: 'Error interno del servidor'})
 
+    }
+ }
+
+ export const updateProduct = async (req, res) => { 
+    try {
+        const { productId } = req.params
+        const { name, price, description } = req.body
+
+        const product = await Product.findByIdAndUpdate(productId, { name, price, description }, { new: true })
+        if(!product) {
+            return res.status(404).json({message: 'El producto no existe'})
+        }
+
+        return res.status(200).json({message: 'El producto ha sido actualizado correctamente', product})
+    } catch (error) {
+        console.error('Error al actualizar el producto: ', error)
+
+        return res.status(500).json({message: 'Error interno del servidor'})
     }
  }
