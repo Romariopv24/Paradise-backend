@@ -17,7 +17,8 @@ export const getOrders = async (req, res) => {
 
 //Agregar Order
 export const addOrder = async (req, res) => {
-    const { items } = req.body 
+    const Items = req.body 
+    const items = [Items]
     if(!items || items.length === 0) {
         return res.status(400).json({message: 'El carrito de compras esta vacio'})
     }
@@ -26,6 +27,8 @@ export const addOrder = async (req, res) => {
         items: items.map((item) => ({
             productId: item.productId,
             name: item.name,
+            description: item.description,
+            category: item.category,
             price: item.price,
             quantity: item.quantity
         })),
