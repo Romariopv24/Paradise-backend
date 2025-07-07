@@ -1,11 +1,11 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-import connectDB from './DB/connection.js'
+// import connectDB from './DB/connection.js'
 import routes from './Routes/index.js'
 
 // base de datos
-connectDB()
+// connectDB()
 
 const app = express()
 

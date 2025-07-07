@@ -1,0 +1,16 @@
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+
+# Supabase local (si usas emuladores)
+supabase/.temp
+supabase/.env
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Dependencias
+node_modules/
+dist/

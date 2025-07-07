@@ -1,3 +1,4 @@
+import supabase from '../../../DB/connection.js'
 import Product from '../Models/Product.model.js'
 
 
@@ -18,33 +19,37 @@ import Product from '../Models/Product.model.js'
 
  //Agregar productos
 
- export const addProducts = async (req,res) => {
-    try {
-        const newProduct = await Product(req.body)
-        if(!newProduct) {
-            return res.status(404).json({
-                success: false,
-                message:'Campos Incompletos'})
-        }
-
-        const saveProduct = await newProduct.save()
-        return res.status(200).json({success:true, message: 'El producto ha sido guardado correctamente', product: {
-            id: saveProduct._id,
-            image: saveProduct.image,
-            name: saveProduct.name,
-            category: saveProduct.category,
-            price: saveProduct.price,
-            description: saveProduct.description,
-            createAt: saveProduct.createdAt,
-        }})
-
-    } catch (error) {
-        
-        console.error("Error guardando el producto: ", error)
-
-        return res.status(500).json({message:`Internal server error: ${error} `, error: error, code: 401, success:false})
+ export const addProducts = async (req, res) => {
+  try {
+    const { image, name, category, price, description } = req.body;
+    
+    if (!image || !name || !category || !price || !description) {
+      return res.status(400).json({
+        success: false,
+        message: 'Todos los campos son requeridos'
+      });
     }
- }
+
+    const nosql = [{data: {image, name, category, price, description}}]
+
+    const { error } = await supabase.from("products").insert(nosql)
+
+    if (error) console.log(error.message);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Producto creado exitosamente',
+      product: nosql[0]
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
  export const deleProduct = async (req, res) => {
     try {
