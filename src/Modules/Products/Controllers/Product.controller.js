@@ -1,40 +1,74 @@
 import supabase from '../../../DB/connection.js'
-import Product from '../Models/Product.model.js'
+
+// Obtener un solo producto por id
+export const getProductById = async (req, res) => {
+    try {
+        const { productId } = req.query;
+        if (!productId) {
+            return res.status(400).json({ message: 'Falta el parámetro productId' });
+        }
+        const { data, error } = await supabase.from("products").select("*").eq('id', productId);
+        if (error) {
+            console.error('Error al obtener el producto de Supabase:', error);
+            return res.status(500).json({ message: 'Error al obtener el producto de Supabase' });
+        }
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'El producto no existe' });
+        }
+        return res.json(data[0]);
+    } catch (error) {
+        console.error('Error al obtener el producto:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
 
 
 //obtener todos los productos
- export const getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find()
-        if(!products || products.length === 0) {
-            return res.status(404).json({message: 'No hay productos encontrados'})
-        } 
-
-        return res.json(products)
+        const { data: products, error } = await supabase.from("products").select("*");
+        if (error) {
+            console.error('Error al obtener productos de Supabase:', error);
+            return res.status(500).json({ message: 'Error al obtener productos de Supabase' });
+        }
+        if (!products || products.length === 0) {
+            return res.status(404).json({ message: 'No hay productos encontrados' });
+        }
+        return res.json(products);
     } catch (error) {
-        console.error('Error al obtener el producto:', error)
-        return res.status(500).json({message:'Internal Server Error'})
+        console.error('Error al obtener el producto:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
- }
+}
 
  //Agregar productos
 
  export const addProducts = async (req, res) => {
   try {
     const { image, name, category, price, description } = req.body;
-    
-    if (!image || !name || !category || !price || !description) {
-      return res.status(400).json({
-        success: false,
-        message: 'Todos los campos son requeridos'
-      });
+
+    // Validación estricta de campos requeridos
+    const requiredKeys = ['image', 'name', 'category', 'price', 'description'];
+    for (const key of requiredKeys) {
+      if (!req.body.hasOwnProperty(key) || req.body[key] === undefined || req.body[key] === null || req.body[key] === "") {
+        return res.status(400).json({
+          success: false,
+          message: `El campo '${key}' es requerido`
+        });
+      }
     }
 
-    const nosql = [{data: {image, name, category, price, description}}]
+    const nosql = [{ data: { image, name, category, price, description } }];
 
-    const { error } = await supabase.from("products").insert(nosql)
+    const { error } = await supabase.from("products").insert(nosql);
 
-    if (error) console.log(error.message);
+    if (error) {
+      console.log(error.message);
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
 
     return res.status(201).json({
       success: true,
@@ -51,35 +85,40 @@ import Product from '../Models/Product.model.js'
   }
 };
 
- export const deleProduct = async (req, res) => {
+export const deleProduct = async (req, res) => {
     try {
-        const deleteProduct = await Product.findByIdAndDelete(req.params.productId)
-        if(!deleProduct) {
-            return res.status(404).json({message: 'El producto no existe'})
+        const { productId } = req.params;
+        const { error } = await supabase.from("products").delete().eq('id', productId);
+        if (error) {
+            console.error('Error al eliminar el producto en Supabase:', error);
+            return res.status(500).json({ message: 'Error al eliminar el producto en Supabase' });
         }
-        return res.status(201).json({message: 'El producto ha sido eliminado correctamente'})
+        return res.status(200).json({ message: 'El producto ha sido eliminado correctamente' });
     } catch (error) {
-        console.error('Error al eiminar el producto: ', error)
-
-        return res.status(500).json({message: 'Error interno del servidor'})
-
+        console.error('Error al eliminar el producto: ', error);
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
- }
+}
 
- export const updateProduct = async (req, res) => { 
+export const updateProduct = async (req, res) => {
     try {
-        const { productId } = req.params
-        const { image, name, price, description, category } = req.body
-
-        const product = await Product.findByIdAndUpdate(productId, {image, name, price, description, category }, { new: true })
-        if(!product) {
-            return res.status(404).json({message: 'El producto no existe'})
+        const { productId } = req.params;
+        const { image, name, price, description, category } = req.body;
+        const { data, error } = await supabase
+            .from("products")
+            .update({ image, name, price, description, category })
+            .eq('id', productId)
+            .select();
+        if (error) {
+            console.error('Error al actualizar el producto en Supabase:', error);
+            return res.status(500).json({ message: 'Error al actualizar el producto en Supabase' });
         }
-
-        return res.status(200).json({message: 'El producto ha sido actualizado correctamente', product})
+        if (!data || data.length === 0) {
+            return res.status(404).json({ message: 'El producto no existe' });
+        }
+        return res.status(200).json({ message: 'El producto ha sido actualizado correctamente', product: data[0] });
     } catch (error) {
-        console.error('Error al actualizar el producto: ', error)
-
-        return res.status(500).json({message: 'Error interno del servidor'})
+        console.error('Error al actualizar el producto: ', error);
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
- }
+}
