@@ -2,7 +2,7 @@ import supabase from '../../../DB/connection.js'
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
 
-export const registerUserSql = async(req, res) => {
+export const registerUser = async(req, res) => {
     const {firstName, lastName, phone, email, password} = req.body;
 
     const requiredKeys = ['firstName', 'lastName', 'phone', 'email', 'password'];
@@ -36,50 +36,49 @@ export const registerUserSql = async(req, res) => {
 
 
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email y contraseña requeridos' });
+    const { email , password } = req.body;
+
+    if(!email || !password) {
+        return res.status(400).json({ message: "Email y contraseña son requeridos" })
     }
 
-    // Busca el usuario en Supabase
-    const { data: users, error: findError } = await supabase.from("users").select("data").eq('data->>email', email);
+    const { data: users, error: findError } = await supabase.from("user-mysql").select("*").eq("email", email).single();
     if (findError) {
         return res.status(500).json({ message: findError.message || 'Error al buscar usuario' });
     }
-    const user = users && users.length > 0 ? users[0].data : null;
-    if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+    
+ 
+    console.log(users)
+
+    if(!users) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Verifica la contraseña
-    const validPassword = bcrypt.compareSync(password, user.password);
-    if (!validPassword) {
-        return res.status(401).json({ message: 'Contraseña incorrecta' });
+    const validPassword = bcrypt.compareSync(password, users.password);
+
+
+    if(!validPassword) {
+        return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    // Genera el token
     const token = jwt.sign(
-        { email: user.email, role: user.role },
+        {email: users.email, firstName: users.firstName, lastName: users.lastName, role: users.role},
         process.env.JWT_SECRET || 'secret',
         { expiresIn: '1h' }
     );
+
     res.status(200).json({ message: 'Login exitoso', token });
-};
+}
 
 
+export const logoutUserMySql = async (req, res) => {
 
-export const logoutUser = async (req, res) => {
-    // Para mayor seguridad, puedes requerir el token JWT en el header Authorization
-    // Ejemplo: Authorization: Bearer <token>
-    // Luego, aquí puedes validar el token (opcionalmente agregarlo a una blacklist si implementas una)
-    // Pero normalmente, solo el cliente elimina el token y el backend responde OK
-
-    // Si quieres validar el token:
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if(!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Token no proporcionado' });
     }
     const token = authHeader.split(' ')[1];
+
     try {
         jwt.verify(token, process.env.JWT_SECRET || 'secret');
         // Aquí podrías agregar el token a una blacklist si implementas esa lógica
@@ -87,4 +86,6 @@ export const logoutUser = async (req, res) => {
     } catch (err) {
         return res.status(401).json({ message: 'Token inválido o expirado' });
     }
-};
+    
+}
+
