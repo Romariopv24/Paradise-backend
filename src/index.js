@@ -1,3 +1,3 @@
-import app from "./server.js";
+import expressServer from "./server.js";
 
-export default app;
+const server = expressServer()
