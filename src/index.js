@@ -1,3 +1,3 @@
-import expressServer from "./server.js";
+import app from "./server.js";
 
- expressServer()
+export default app;
