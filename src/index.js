@@ -43,8 +43,8 @@ const app = express()
         res.header('Access-Control-Allow-Headers', 'Authorization,authorization, X-API-KEY,Access-Control-Allow-Origin,Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
         res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         res.header('Allow', 'GET, POST, OPTIONS');
-
-        next();
+        if (req.method === 'OPTIONS') res.sendStatus(200);
+        else next();
     });
     app.use(apiPath.version_api_1, routes)
 
