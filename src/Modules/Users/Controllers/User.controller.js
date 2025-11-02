@@ -35,57 +35,57 @@ export const registerUser = async(req, res) => {
 
 
 
-export const loginUser = async (req, res) => {
-    const { email , password } = req.body;
+// export const loginUser = async (req, res) => {
+//     const { email , password } = req.body;
 
-    if(!email || !password) {
-        return res.status(400).json({ message: "Email y contraseña son requeridos" })
-    }
+//     if(!email || !password) {
+//         return res.status(400).json({ message: "Email y contraseña son requeridos" })
+//     }
 
-    const { data: users, error: findError } = await supabase.from("user-mysql").select("*").eq("email", email).single();
-    if (findError) {
-        return res.status(500).json({ message: findError.message || 'Error al buscar usuario' });
-    }
+//     const { data: users, error: findError } = await supabase.from("user-mysql").select("*").eq("email", email).single();
+//     if (findError) {
+//         return res.status(500).json({ message: findError.message || 'Error al buscar usuario' });
+//     }
     
  
-    console.log(users)
+//     console.log(users)
 
-    if(!users) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
-    }
+//     if(!users) {
+//         return res.status(404).json({ message: "Usuario no encontrado" });
+//     }
 
-    const validPassword = bcrypt.compareSync(password, users.password);
-
-
-    if(!validPassword) {
-        return res.status(401).json({ message: "Contraseña incorrecta" });
-    }
-
-    const token = jwt.sign(
-        {email: users.email, firstName: users.firstName, lastName: users.lastName, role: users.role},
-        process.env.JWT_SECRET || 'secret',
-        { expiresIn: '1h' }
-    );
-
-    res.status(200).json({ message: 'Login exitoso', token });
-}
+//     const validPassword = bcrypt.compareSync(password, users.password);
 
 
-export const logoutUserMySql = async (req, res) => {
+//     if(!validPassword) {
+//         return res.status(401).json({ message: "Contraseña incorrecta" });
+//     }
 
-    const authHeader = req.headers.authorization;
-    if(!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Token no proporcionado' });
-    }
-    const token = authHeader.split(' ')[1];
+//     const token = jwt.sign(
+//         {email: users.email, firstName: users.firstName, lastName: users.lastName, role: users.role},
+//         process.env.JWT_SECRET || 'secret',
+//         { expiresIn: '1h' }
+//     );
 
-    try {
-        jwt.verify(token, process.env.JWT_SECRET || 'secret');
-        // Aquí podrías agregar el token a una blacklist si implementas esa lógica
-        res.status(200).json({ message: 'Logout exitoso' });
-    } catch (err) {
-        return res.status(401).json({ message: 'Token inválido o expirado' });
-    }
+//     res.status(200).json({ message: 'Login exitoso', token });
+// }
+
+
+// export const logoutUserMySql = async (req, res) => {
+
+//     const authHeader = req.headers.authorization;
+//     if(!authHeader || !authHeader.startsWith('Bearer ')) {
+//         return res.status(401).json({ message: 'Token no proporcionado' });
+//     }
+//     const token = authHeader.split(' ')[1];
+
+//     try {
+//         jwt.verify(token, process.env.JWT_SECRET || 'secret');
+//         // Aquí podrías agregar el token a una blacklist si implementas esa lógica
+//         res.status(200).json({ message: 'Logout exitoso' });
+//     } catch (err) {
+//         return res.status(401).json({ message: 'Token inválido o expirado' });
+//     }
     
-}
+// }
 
