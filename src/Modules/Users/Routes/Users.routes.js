@@ -1,5 +1,5 @@
 import express from 'express'
-import { registerUser, loginUser, logoutUserMySql } from '../Controllers/User.controller.js'
+import { registerUser } from '../Controllers/User.controller.js'
 
 const router = express.Router()
 
