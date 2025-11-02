@@ -1,57 +1,38 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-// import connectDB from './DB/connection.js'
-import routes from './Routes/index.js'
+// import connectDB from './DB/connection.js' 
 
-// base de datos
-// connectDB()
+// --- TEMPORALMENTE COMENTADO: Descomenta esto solo después de que /api/test funcione.
+// import routes from './Routes/index.js' 
 
 const app = express()
 
+// base de datos
+// connectDB() // Si descomentaste esto, revisa las variables de entorno en Vercel
+
+// --- Middlewares de inicialización ---
+app.use(morgan('dev')) 
+app.use(express.json()) 
+app.use(cors()) 
+
+const apiPath = {
+    version_api_1: '/api/v1'
+}
+
+// *** ENDPOINT DE PRUEBA CRÍTICO ***
+// Este endpoint debe funcionar si el servidor inicia.
+app.get('/api/test', (req, res) => {
+    // Si la aplicación arranca, esta será la respuesta.
+    res.status(200).json({ status: 'ok', message: 'API Functioning Correctly on Vercel' });
+});
 
 
-    //crear un middleware
-    app.use(express.json()) // permite procesar cuerpos de solicitudes
-    app.use(morgan('dev')) // muestra peticiones al servidor
-
-    const apiPath = {
-        version_api_1: '/api/v1'
-    }
-
-    const originUrls = ['*']
-
-    const corsOptions = {
-        origin: (origin, callback) => {
-            if(!origin || origenesPermitidos.includes(originUrls)) {
-                callback(null, true)
-            } else { 
-                callback(new Error('Cliente no permitido'))
-            }
-        },
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    }
-
-    app.use(cors(corsOptions))
-    //puerto
-    const PORT = process.env.PORT || 5000
-
-    //rutas
-    app.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin: *');
-        res.header('Access-Control-Allow-Credentials: true');
-        res.header('Access-Control-Allow-Headers', 'Authorization,authorization, X-API-KEY,Access-Control-Allow-Origin,Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.header('Allow', 'GET, POST, OPTIONS');
-
-        next();
-    });
-    app.use(apiPath.version_api_1, routes)
+// Rutas
+// --- TEMPORALMENTE COMENTADO: Descomenta esto solo después de que /api/test funcione.
+// app.use(apiPath.version_api_1, routes)
 
 
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`)
-    })
-
-
-
+// --- CONFIGURACIÓN CRÍTICA PARA VERCEL ---
+// Exportamos la instancia de la aplicación directamente
+export default app

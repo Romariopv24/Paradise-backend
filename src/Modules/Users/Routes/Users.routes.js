@@ -4,7 +4,7 @@ import { registerUser, loginUser, logoutUserMySql } from '../Controllers/User.co
 const router = express.Router()
 
 router.post('/register', registerUser)
-router.post('/login', loginUser)
-router.post('/logout', logoutUserMySql)
+// router.post('/login', loginUser)
+// router.post('/logout', logoutUserMySql)
 
 export default router
