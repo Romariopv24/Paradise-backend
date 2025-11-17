@@ -47,8 +47,10 @@ const app = express()
         else next();
     });
     app.use(apiPath.version_api_1, routes)
+        // routes.forEach(route => {
+        //     app.use(apiPath.version_api_1, route);
+        // });
 
 
 
-
-export default apps;
+export default app;
