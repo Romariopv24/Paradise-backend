@@ -2,7 +2,8 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 // import connectDB from './DB/connection.js'
-import routes from './Routes/index.js'
+import ProductRoutes from './Modules/Products/Routes/Product.routes.js'
+// import routes from './Routes/index.js'
 
 // base de datos
 // connectDB()
@@ -46,10 +47,10 @@ const app = express()
         if (req.method === 'OPTIONS') res.sendStatus(200);
         else next();
     });
-    // app.use(apiPath.version_api_1, routes)
-        routes.forEach(route => {
-            app.use(apiPath.version_api_1, route);
-        });
+    app.use(apiPath.version_api_1, ProductRoutes)
+        // routes.forEach(route => {
+        //     app.use(apiPath.version_api_1, route);
+        // });
 
 
 
