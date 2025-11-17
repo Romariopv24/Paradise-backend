@@ -46,10 +46,10 @@ const app = express()
         if (req.method === 'OPTIONS') res.sendStatus(200);
         else next();
     });
-    app.use(apiPath.version_api_1, routes)
-        // routes.forEach(route => {
-        //     app.use(apiPath.version_api_1, route);
-        // });
+    // app.use(apiPath.version_api_1, routes)
+        routes.forEach(route => {
+            app.use(apiPath.version_api_1, route);
+        });
 
 
 
