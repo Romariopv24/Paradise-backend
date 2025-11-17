@@ -49,9 +49,6 @@ const app = express()
     app.use(apiPath.version_api_1, routes)
 
 
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`)
-    })
 
 
 export default apps;
