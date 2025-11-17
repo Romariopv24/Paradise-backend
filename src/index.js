@@ -54,4 +54,4 @@ const app = express()
     })
 
 
-
+export default apps;
