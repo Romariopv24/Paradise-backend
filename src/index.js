@@ -52,6 +52,8 @@ const app = express()
         //     app.use(apiPath.version_api_1, route);
         // });
 
-
+app.get('/', (req, res) => {
+    res.status(200).send('API is running successfully!');
+});
 
 export default app;
