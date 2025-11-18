@@ -3,7 +3,6 @@ import morgan from 'morgan'
 import cors from 'cors'
 // import connectDB from './DB/connection.js'
 import routes from './Routes/index.js'
-import 'dotenv/config';
 // base de datos
 // connectDB()
 
@@ -58,3 +57,4 @@ async function expressServer() {
 
 
 export default expressServer
+export { app }
