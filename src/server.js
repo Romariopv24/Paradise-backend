@@ -3,9 +3,15 @@ import morgan from 'morgan'
 import cors from 'cors'
 // import connectDB from './DB/connection.js'
 import routes from './Routes/index.js'
-
+import * as dotenv from 'dotenv';
 // base de datos
 // connectDB()
+
+
+// Solo ejecutamos dotenv.config() si NO estamos en un entorno de producción (Render ya provee las variables).
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
 
 const app = express()
 
