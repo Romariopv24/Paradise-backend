@@ -7,12 +7,6 @@ import 'dotenv/config';
 // base de datos
 // connectDB()
 
-
-// Solo ejecutamos dotenv.config() si NO estamos en un entorno de producción (Render ya provee las variables).
-if (process.env.NODE_ENV !== 'production') {
-    dotenv.config();
-}
-
 const app = express()
 
 async function expressServer() {
@@ -30,7 +24,7 @@ async function expressServer() {
 
     const corsOptions = {
         origin: (origin, callback) => {
-            if(!origin || origenesPermitidos.includes(originUrls)) {
+            if(!origin || originUrls.includes('*') || originUrls.includes(origin)) {
                 callback(null, true)
             } else { 
                 callback(new Error('Cliente no permitido'))
