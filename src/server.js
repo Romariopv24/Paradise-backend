@@ -34,7 +34,7 @@ async function expressServer() {
 
     app.use(cors(corsOptions))
     //puerto
-    const PORT = process.env.PORT || 5000
+    const PORT = process.env.PORT 
 
     //rutas
     app.use((req, res, next) => {
