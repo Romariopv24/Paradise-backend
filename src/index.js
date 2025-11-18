@@ -21,17 +21,10 @@ const app = express()
     }
 
     const originUrls = ['*']
-
-    const corsOptions = {
-        origin: (origin, callback) => {
-            if(!origin || origenesPermitidos.includes(originUrls)) {
-                callback(null, true)
-            } else { 
-                callback(new Error('Cliente no permitido'))
-            }
-        },
+    app.use(cors({
+        origin: '*', // Permitir cualquier origen
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    }
+    }));
 
     app.use(cors(corsOptions))
     //puerto
