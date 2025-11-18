@@ -2,8 +2,7 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 // import connectDB from './DB/connection.js'
-import ProductRoutes from './Modules/Products/Routes/Product.routes.js'
-// import routes from './Routes/index.js'
+import routes from './Routes/index.js'
 
 // base de datos
 // connectDB()
@@ -21,10 +20,17 @@ const app = express()
     }
 
     const originUrls = ['*']
-    app.use(cors({
-        origin: '*', // Permitir cualquier origen
+
+    const corsOptions = {
+        origin: (origin, callback) => {
+            if(!origin || origenesPermitidos.includes(originUrls)) {
+                callback(null, true)
+            } else { 
+                callback(new Error('Cliente no permitido'))
+            }
+        },
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    }));
+    }
 
     app.use(cors(corsOptions))
     //puerto
@@ -40,13 +46,12 @@ const app = express()
         if (req.method === 'OPTIONS') res.sendStatus(200);
         else next();
     });
-    app.use(apiPath.version_api_1, ProductRoutes)
-        // routes.forEach(route => {
-        //     app.use(apiPath.version_api_1, route);
-        // });
+    app.use(apiPath.version_api_1, routes)
 
-app.get('/', (req, res) => {
-    res.status(200).send('API is running successfully!');
-});
 
-export default app;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`)
+    })
+
+
+export default app

@@ -5,11 +5,9 @@ import { addProducts, deleProduct, getProducts, updateProduct, getProductById } 
 const router = express.Router()
 
 router.get('/products', getProducts)
-router.get('/product/:productId', getProductById) // 💡 CAMBIO A: /product/:productId (Para obtener por ID)
+router.get('/product', getProductById)
 router.post('/products', addProducts)
-
-// 💡 CAMBIOS CLAVE: Agrega el prefijo /products
-router.delete('/products/:productId', deleProduct) 
-router.put('/products/:productId', updateProduct)
+router.delete('/:productId', deleProduct)
+router.put('/:productId', updateProduct)
 
 export default router
