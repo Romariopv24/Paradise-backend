@@ -26,7 +26,7 @@ export const getProductById = async (req, res) => {
 //obtener todos los productos
 export const getProducts = async (req, res) => {
     try {
-        const { data: products, error } = await supabase.from("products").select("*");
+        const { data: products, error } = await supabase.from("products-mysql").select("*");
         if (error) {
             console.error('Error al obtener productos de Supabase:', error);
             return res.status(500).json({ message: 'Error al obtener productos de Supabase' });
