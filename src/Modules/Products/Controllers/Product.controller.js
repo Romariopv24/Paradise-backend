@@ -58,8 +58,12 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const insertData = { image, name, price, description, quantity };
+    let insertData = { image, name, price, description, quantity };
 
+    if(req.body.images.length > 0) {
+        insertData = {...insertData, images: req.body.images};
+    }
+ 
     const {data, error } = await supabase.from("products_mysql").insert([insertData]).select();
 
     if (error) {
@@ -78,7 +82,6 @@ export const getProducts = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error:", error);
     return res.status(500).json({
       success: false,
       message: error.message
