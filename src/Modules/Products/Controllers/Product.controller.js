@@ -45,10 +45,10 @@ export const getProducts = async (req, res) => {
 
  export const addProducts = async (req, res) => {
   try {
-    const { image, name, category, price, description } = req.body;
+    const { image, name, price, description } = req.body;
 
     // Validación estricta de campos requeridos
-    const requiredKeys = ['image', 'name', 'category', 'price', 'description', 'quantity'];
+    const requiredKeys = ['image', 'name', 'price', 'description', 'quantity'];
     for (const key of requiredKeys) {
       if (!req.body.hasOwnProperty(key) || req.body[key] === undefined || req.body[key] === null || req.body[key] === "") {
         return res.status(400).json({
@@ -58,8 +58,8 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const insertData = { image, name, category, price, description, quantity };
-    
+    const insertData = { image, name, price, description, quantity };
+
     const { error } = await supabase.from("products_mysql").insert([insertData]).select();
 
     if (error) {
