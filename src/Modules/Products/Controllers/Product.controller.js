@@ -60,7 +60,7 @@ export const getProducts = async (req, res) => {
 
     let insertData = { image, name, price, description, quantity };
 
-    if(req.body.images.length > 0) {
+    if(req.body.images) {
         insertData = {...insertData, images: req.body.images};
     }
  
