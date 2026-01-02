@@ -60,7 +60,7 @@ export const getProducts = async (req, res) => {
 
     const insertData = { image, name, price, description, quantity };
 
-    const { error } = await supabase.from("products_mysql").insert([insertData]).select();
+    const {data, error } = await supabase.from("products_mysql").insert([insertData]).select();
 
     if (error) {
       console.log(error.message);
@@ -69,11 +69,12 @@ export const getProducts = async (req, res) => {
         message: error.message
       });
     }
-
+    
+    
     return res.status(201).json({
       success: true,
       message: 'Producto creado exitosamente',
-      product: nosql[0]
+      product: data
     });
 
   } catch (error) {
