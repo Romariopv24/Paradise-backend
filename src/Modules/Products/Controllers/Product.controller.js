@@ -45,7 +45,7 @@ export const getProducts = async (req, res) => {
 
  export const addProducts = async (req, res) => {
   try {
-    const { image, name, price, description } = req.body;
+    const { image, name, price, description, quantity} = req.body;
 
     // Validación estricta de campos requeridos
     const requiredKeys = ['image', 'name', 'price', 'description', 'quantity'];
