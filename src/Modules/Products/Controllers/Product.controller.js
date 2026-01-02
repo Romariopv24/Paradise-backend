@@ -26,7 +26,7 @@ export const getProductById = async (req, res) => {
 //obtener todos los productos
 export const getProducts = async (req, res) => {
     try {
-        const { data: products, error } = await supabase.from("products-mysql").select("*");
+        const { data: products, error } = await supabase.from("products_mysql").select("*");
         if (error) {
             console.error('Error al obtener productos de Supabase:', error);
             return res.status(500).json({ message: 'Error al obtener productos de Supabase' });
@@ -48,7 +48,7 @@ export const getProducts = async (req, res) => {
     const { image, name, category, price, description } = req.body;
 
     // Validación estricta de campos requeridos
-    const requiredKeys = ['image', 'name', 'category', 'price', 'description'];
+    const requiredKeys = ['image', 'name', 'category', 'price', 'description', 'quantity'];
     for (const key of requiredKeys) {
       if (!req.body.hasOwnProperty(key) || req.body[key] === undefined || req.body[key] === null || req.body[key] === "") {
         return res.status(400).json({
@@ -58,9 +58,9 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const nosql = [{ data: { image, name, category, price, description } }];
-
-    const { error } = await supabase.from("products").insert(nosql);
+    const insertData = { image, name, category, price, description, quantity };
+    
+    const { error } = await supabase.from("products_mysql").insert([insertData]).select();
 
     if (error) {
       console.log(error.message);
